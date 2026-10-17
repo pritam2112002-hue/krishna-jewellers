@@ -19,4 +19,52 @@
 <section class="sec story"><div class="w"><div class="ey">OUR STORY</div><h2>A Jewellery Legacy Built Across Generations</h2><p>Our family tradition in jewellery goes back generations, beginning with Late Shri Hansraj Soni and carried forward by Shri Omprakash Soni, who has been actively building the family jewellery business for more than 26 years. Krishna Jewellers was established in 2021. Today, Preetam Soni carries this tradition forward into its third generation.</p><b>Three Generations. One Tradition. Built on Trust.</b></div></section>
 <footer id="contact"><div class="w foot"><div><h3>KRISHNA JEWELLERS</h3><p>Ram Nagar, Balaji Marg, Near B.R. Birla School, Jodhpur, Rajasthan</p><p>Monday–Sunday • 10:00 AM–9:00 PM</p><a href="https://maps.app.goo.gl/zZqr4gFCdBpxJYJ9A?g_st=ic">Open in Google Maps →</a></div><div><h3>Quick Links</h3><a href="#categories">Shop by Category</a><a href="#new">New Arrivals</a><a href="#festival">Festival Sale</a></div><div><h3>Get in Touch</h3><a href="tel:+919057646195">+91 90576 46195</a><a href="tel:+918107146461">+91 81071 46461</a><a href="https://wa.me/919057646195">WhatsApp Us →</a></div></div></footer>
 <a class="wa" href="https://wa.me/919057646195?text=Hi%20Krishna%20Jewellers%2C%20I%20need%20help%20with%20a%20product.">WhatsApp</a>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = 'https://aaklyglxbmmoplqjnydc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_q94JRTYm8XwuDVfsTvlxwA_A3sJR2Re';
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadProducts() {
+  const { data, error } = await db
+    .from('Product')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const section = document.querySelector('#new');
+  if (!section) return;
+
+  let box = document.getElementById('live-products');
+
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'live-products';
+    box.style.cssText =
+      'display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:25px;';
+    section.querySelector('.w').appendChild(box);
+  }
+
+  box.innerHTML = data.map(p => `
+    <div style="background:white;border:1px solid #eee;padding:15px;border-radius:14px">
+      ${p.image_url
+        ? `<img src="${p.image_url}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px">`
+        : `<div style="height:220px;background:#f5f2eb;border-radius:10px;display:flex;align-items:center;justify-content:center">KRISHNA JEWELLERS</div>`
+      }
+      <h3>${p.name}</h3>
+      <div>${p.weight ? p.weight + ' g' : ''}</div>
+      <div><del>₹${p.mrp}</del> &nbsp; <b>₹${p.price}</b></div>
+    </div>
+  `).join('');
+}
+
+loadProducts();
+</script>
 </body></html>
